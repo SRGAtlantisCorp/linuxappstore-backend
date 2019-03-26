@@ -54,7 +54,6 @@ namespace LinuxAppStore_Backend
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
