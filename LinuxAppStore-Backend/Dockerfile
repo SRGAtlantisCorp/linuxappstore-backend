@@ -1,20 +1,20 @@
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
+FROM microsoft/dotnet:2.2-sdk AS build-env
 WORKDIR /app
+
+# Open ports
 EXPOSE 80
 EXPOSE 443
 
-FROM microsoft/dotnet:2.2-sdk AS build
-WORKDIR /src
-COPY ["LinuxAppStore-Backend/LinuxAppStore-Backend.csproj", "LinuxAppStore-Backend/"]
-RUN dotnet restore "LinuxAppStore-Backend/LinuxAppStore-Backend.csproj"
-COPY . .
-WORKDIR "/src/LinuxAppStore-Backend"
-RUN dotnet build "LinuxAppStore-Backend.csproj" -c Release -o /app
+# Copy csproj and restore
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM build AS publish
-RUN dotnet publish "LinuxAppStore-Backend.csproj" -c Release -o /app
+# Copy everything and build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# Build runtime image
+FROM microsoft/dotnet:2.2-aspnetcore-runtime
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "LinuxAppStore-Backend.dll"]
