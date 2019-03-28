@@ -31,7 +31,7 @@ namespace LinuxAppStore_Backend
         {
             Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
 
-            services
+            services.AddEntityFrameworkNpgsql()
             .AddDbContext<DataContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
