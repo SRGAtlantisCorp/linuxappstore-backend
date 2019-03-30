@@ -28,11 +28,17 @@ namespace LinuxAppStore_Backend.Controllers
 
         // GET api/apps
         [HttpGet("Apps")]
-        public IEnumerable<LinuxAppModel> Apps()
+        public IEnumerable<LinuxAppModel> Apps(int? type)
         {
-            var entities = _context.LinuxApps.ToList();
+            var list = new List<LinuxAppModel>();
 
-            var list = _context.LinuxApps.ProjectTo<LinuxAppModel>(_mapper.ConfigurationProvider).AsEnumerable();
+            if (type.HasValue)
+            {
+                list.AddRange(_context.LinuxApps.Where(x => x.Type == type.Value).ProjectTo<LinuxAppModel>(_mapper.ConfigurationProvider));
+            } else
+            {
+                list.AddRange(_context.LinuxApps.ProjectTo<LinuxAppModel>(_mapper.ConfigurationProvider));
+            }
 
             return list;
         }
