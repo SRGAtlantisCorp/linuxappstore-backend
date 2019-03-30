@@ -36,6 +36,12 @@ namespace LinuxAppStore_Backend
             {
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             })
+            .AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            }))
             .AddAutoMapper()
             .AddMvc()
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

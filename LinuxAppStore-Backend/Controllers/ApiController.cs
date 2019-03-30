@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LinuxAppStore_Backend.Data;
-using LinuxAppStore_Backend.Data.Entity;
 using LinuxAppStore_Backend.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinuxAppStore_Backend.Controllers
 {
     [Route("api/")]
     [ApiController]
+    [EnableCors("CorsPolicy")]
     public class ApiController : ControllerBase
     {
 
