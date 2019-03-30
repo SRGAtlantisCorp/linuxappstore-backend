@@ -41,9 +41,30 @@ namespace LinuxAppStore_Backend.Data
                     index.Relational().Name = index.Relational().Name.ToSnakeCase();
                 }
             }
+
+            builder.Query<VwRecentlyAdded>();
         }
 
         public DbSet<LinuxApp> LinuxApps { get; set; }
+
+        public async Task<IQueryable<VwRecentlyAdded>> GetVwRecentlyAdded()
+        {
+            var list = new List<VwRecentlyAdded>();
+
+            try
+            {
+                list = await this.Query<VwRecentlyAdded>().FromSql("SELECT id, name, type, date_added as dateadded, last_updated as lastupdated," +
+                    " src, icon, current_version as currentversion" +
+                    " FROM vw_recently_added").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return list.AsQueryable();
+        }
+
 
     }
 }

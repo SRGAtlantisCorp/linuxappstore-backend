@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LinuxAppStore_Backend.Data;
+using LinuxAppStore_Backend.Data.Entity;
 using LinuxAppStore_Backend.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,5 +43,25 @@ namespace LinuxAppStore_Backend.Controllers
 
             return list;
         }
+
+        // GET api/recentlyadded
+        [HttpGet("RecentlyAdded")]
+        public async Task<IActionResult> RecentlyAdded(int? type, int? limit)
+        {
+            var recentlyAdded = await _context.GetVwRecentlyAdded();
+
+            if (type.HasValue)
+            {
+                recentlyAdded = recentlyAdded.Where(x => x.Type == type.Value);
+            }
+
+            if (limit.HasValue)
+            {
+                recentlyAdded = recentlyAdded.Take(limit.Value);
+            }
+
+            return Ok(recentlyAdded);
+        }
+
     }
 }
