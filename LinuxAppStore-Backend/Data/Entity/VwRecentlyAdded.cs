@@ -17,5 +17,11 @@ namespace LinuxAppStore_Backend.Data.Entity
 
         public DateTime LastUpdated { get; set; }
 
+        public string Src { get; set; }
+
+        public string Icon { get; set; }
+
+        public string CurrentVersion { get; set; }
+
     }
 }
