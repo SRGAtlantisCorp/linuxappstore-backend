@@ -43,6 +43,7 @@ namespace LinuxAppStore_Backend.Data
             }
 
             builder.Query<VwRecentlyAdded>();
+            builder.Query<VwRecentlyUpdated>();
         }
 
         public DbSet<LinuxApp> LinuxApps { get; set; }
@@ -56,6 +57,24 @@ namespace LinuxAppStore_Backend.Data
                 list = await this.Query<VwRecentlyAdded>().FromSql("SELECT id, name, type, date_added as dateadded, last_updated as lastupdated," +
                     " src, icon, current_version as currentversion" +
                     " FROM vw_recently_added").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return list.AsQueryable();
+        }
+
+        public async Task<IQueryable<VwRecentlyUpdated>> GetVwRecentlyUpdated()
+        {
+            var list = new List<VwRecentlyUpdated>();
+
+            try
+            {
+                list = await this.Query<VwRecentlyUpdated>().FromSql("SELECT id, name, type, date_added as dateadded, last_updated as lastupdated," +
+                    " src, icon, current_version as currentversion" +
+                    " FROM vw_recently_updated").ToListAsync();
             }
             catch (Exception ex)
             {
