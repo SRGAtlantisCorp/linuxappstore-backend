@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 LinuxAppStore-Backend/appsettings.json
+LinuxAppStore-Backend/.vscode

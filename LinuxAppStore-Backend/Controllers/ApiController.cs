@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using LinuxAppStore_Backend.Data;
+using LinuxAppStore_Backend.Data.Entity;
 using LinuxAppStore_Backend.Model;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace LinuxAppStore_Backend.Controllers
 {
@@ -20,12 +22,16 @@ namespace LinuxAppStore_Backend.Controllers
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
+        private readonly IConfiguration _configuration;
+
         public ApiController(
             DataContext context,
-            IMapper mapper)
+            IMapper mapper,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         // GET api/apps
@@ -43,6 +49,29 @@ namespace LinuxAppStore_Backend.Controllers
             }
 
             return list;
+        }
+
+        [HttpPost("AppImages")]
+        public async Task<IActionResult> AppImages([FromBody] LinuxAppPostModel model)
+        {
+            if (model == null || model.Apps == null)
+            {
+                return BadRequest();
+            }
+
+            var apiKey = _configuration.GetValue<string>("ApiKey");
+
+            if (apiKey != model.ApiKey) {
+                return BadRequest();
+            }
+
+            var entities = model.Apps.AsQueryable().ProjectTo<LinuxApp>(_mapper.ConfigurationProvider);
+            
+            // TODO: need a way to update app images if it already exists
+            _context.LinuxApps.AddRange(entities);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // GET api/recentlyadded
