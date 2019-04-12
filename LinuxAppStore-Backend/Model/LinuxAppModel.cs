@@ -22,5 +22,7 @@ namespace LinuxAppStore_Backend.Model
         public string Icon { get; set; }
 
         public string CurrentVersion { get; set; }
+
+        public string Identifier { get; set; }
     }
 }

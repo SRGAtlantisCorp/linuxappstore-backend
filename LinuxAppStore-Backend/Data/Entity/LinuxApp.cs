@@ -24,5 +24,7 @@ namespace LinuxAppStore_Backend.Data.Entity
         public string Icon { get; set; }
 
         public string CurrentVersion { get; set; }
+
+        public string Identifier { get; set; }
     }
 }
