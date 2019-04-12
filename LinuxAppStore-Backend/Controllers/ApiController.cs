@@ -53,8 +53,8 @@ namespace LinuxAppStore_Backend.Controllers
             return list;
         }
 
-        [HttpPost("AppImages")]
-        public async Task<IActionResult> AppImages([FromBody] LinuxAppPostModel model)
+        [HttpPost("Apps")]
+        public async Task<IActionResult> Apps([FromBody] LinuxAppPostModel model)
         {
             if (model == null || model.Apps == null)
             {
@@ -67,50 +67,8 @@ namespace LinuxAppStore_Backend.Controllers
                 return BadRequest();
             }
 
-            var currentEntities = _context.LinuxApps.Where(x => x.Type == (int)LinuxAppType.AppImage).ToList();
-            var entities = model.Apps.AsQueryable().Where(x => x.Type == (int)LinuxAppType.AppImage).ProjectTo<LinuxApp>(_mapper.ConfigurationProvider);
-
-            foreach(var item in entities)
-            {
-                var result = currentEntities.Where(x => x.Name == item.Name && x.DateAdded == item.DateAdded && x.Type == item.Type).FirstOrDefault();
-
-                if (result != null)
-                {
-                    if (item.CurrentVersion != result.CurrentVersion
-                    || item.Icon != result.Icon
-                    || item.Src != result.Src)
-                    {
-                    _mapper.Map(item, result);
-                    _context.LinuxApps.Update(result);
-                    currentEntities.Remove(result);               
-                    }
-                } else
-                {
-                    _context.Add(item);
-                }
-            }
-            
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost("Flatpaks")]
-        public async Task<IActionResult> Flatpaks([FromBody] LinuxAppPostModel model)
-        {
-            if (model == null || model.Apps == null)
-            {
-                return BadRequest();
-            }
-
-            var apiKey = _configuration.GetValue<string>("ApiKey");
-
-            if (apiKey != model.ApiKey) {
-                return BadRequest();
-            }
-
-            var currentEntities = _context.LinuxApps.Where(x => x.Type == (int)LinuxAppType.Flatpak).ToList();
-            var entities = model.Apps.AsQueryable().Where(x => x.Type == (int)LinuxAppType.Flatpak).ProjectTo<LinuxApp>(_mapper.ConfigurationProvider);
+            var currentEntities = _context.LinuxApps.ToList();
+            var entities = model.Apps.AsQueryable().ProjectTo<LinuxApp>(_mapper.ConfigurationProvider);
 
             foreach(var item in entities)
             {
@@ -124,51 +82,9 @@ namespace LinuxAppStore_Backend.Controllers
                     || item.Name != result.Name)
                     {
                         _mapper.Map(item, result);
+                        result.LastUpdated = DateTime.Now;
                         _context.LinuxApps.Update(result);
-                        currentEntities.Remove(result);                   
-                    }
-                } else
-                {
-                    _context.Add(item);
-                }
-            }
-            
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost("Snaps")]
-        public async Task<IActionResult> Snaps([FromBody] LinuxAppPostModel model)
-        {
-            if (model == null || model.Apps == null)
-            {
-                return BadRequest();
-            }
-
-            var apiKey = _configuration.GetValue<string>("ApiKey");
-
-            if (apiKey != model.ApiKey) {
-                return BadRequest();
-            }
-
-            var currentEntities = _context.LinuxApps.Where(x => x.Type == (int)LinuxAppType.Snap).ToList();
-            var entities = model.Apps.AsQueryable().Where(x => x.Type == (int)LinuxAppType.Snap).ProjectTo<LinuxApp>(_mapper.ConfigurationProvider);
-
-            foreach(var item in entities)
-            {
-                var result = currentEntities.Where(x => x.Identifier == item.Identifier && x.Type == item.Type).FirstOrDefault();
-
-                if (result != null)
-                {
-                    if (item.CurrentVersion != result.CurrentVersion
-                    || item.Icon != result.Icon
-                    || item.Src != result.Src
-                    || item.Name != result.Name)
-                    {
-                        _mapper.Map(item, result);
-                        _context.LinuxApps.Update(result);
-                        currentEntities.Remove(result);                   
+                        currentEntities.Remove(result);               
                     }
                 } else
                 {
