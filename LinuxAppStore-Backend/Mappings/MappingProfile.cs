@@ -12,6 +12,8 @@ namespace LinuxAppStore_Backend.Mappings
         public MappingProfile()
         {
             CreateMap<Data.Entity.LinuxApp, LinuxAppModel>();
+            CreateMap<Data.Entity.LinuxApp, Data.Entity.LinuxApp>()
+            .ForMember(m => m.Id, opt => opt.Ignore());
         }
     }
 }
